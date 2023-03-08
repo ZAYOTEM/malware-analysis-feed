@@ -1,0 +1,35 @@
+import "pe"
+rule Amadey{
+meta:
+	author="enessakircolak"
+	date= "01.03.2023"
+strings:
+	$a = "Amadey.pdb"
+	$b = {83 3D ?? ?? ?? ?? 10 BE ?? ?? ?? ?? 8B CB 0F 43 35 ?? ?? ?? ?? 2B C8 8D 04 0A 33 D2 F7 F3 8B 5D EC 8B CB 83 7B 14 10 72 02 8B 0B 8A 04 32 8B 75 F0 88 04 31 46 89 75 F0 3B 75 F8}
+	$mutex = "006700e5a2ab05704bbb0c589b88924d"
+	$key = "850c61ff7cfc4c28ae073b6ce7172cbd"
+	$enc1 = "KdxwH F5HlVzElz0"
+	$enc2 = "RUYIQviGQm0eMYcgcqYv43U21B4l3oSyaXCeLT0D9o0w7HQicrCl430eVT8s3I BWRyeQNSq9kGV4IMpbGqC43sm3Tzv"
+	$enc3 = "OWK2OcK57Z4nN5cwdKKpKX0ofs=="
+	$enc4 = "AKeF7S 5VY 2EWImc7qr53g2eSZqFkCp9XyvGMWm IJ9BIWeb0J5AnMjhCueFACp8Qmn7cKyVV5k"
+	$api1 = "CreateMutex"
+	$api2 = "GetVersionEx"
+	$api3 = "CreateThread"
+	$api4 = "ShellExecute"
+	$api5 = "HttpOpenRequest"
+	$api6 = "InternetOpenUrl"
+	$api7 = "CopyFile"
+	$api8 = "LoadLibraryEx"
+	$api9 = "CreateDirectory"
+	$api10 = "RemoveDirectory"
+	$api11 = "GetFileAttributes"
+	$api12 = "RegCloseKey"
+	
+condition:
+	uint16(0) == 0x5a4d
+	and filesize <= 1MB
+	and pe.imports("WININET.dll")
+	and(
+	$a or $b or all of($mutex,$key,$enc1,$enc2,$enc3,$enc4) or all of ($api1,$api2,$api3,$api4,$api5,$api6,$api7,$api8,$api9,$api10,$api11, $api12)
+	)
+}
